@@ -8,7 +8,8 @@
         <version>0.23.6</version>
     </parent>
     <artifactId>com.microsoft.jdtls.ext.core</artifactId>
-    <packaging>eclipse-plugin</packaging>
+    <packaging>
+        <?m2e execute onConfiguration,onIncremental?>eclipse-plugin</packaging>
     <name>${base.name} :: JDTLS Ext Plugin</name>
     <properties>
     </properties>
