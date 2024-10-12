@@ -16,10 +16,18 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
-</project>
+               <groupId>org.eclipse.tycho</groupId>
+            <artifactId>tycho-bnd-plugin</artifactId>
+            <version>4.0.3</version>
+            <executions>
+                <execution>
+                    <id>default-process</id>
+                    <goals>
+                        <goal>process</goal>
+                    </goals>
+                    <phase>process-classes</phase>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
