@@ -1090,6 +1090,7 @@
     "minimatch": "^5.1.6",
     "semver": "^7.3.8",
     "vscode-extension-telemetry-wrapper": "^0.14.0",
+    "vscode-java-dependency": "file:",
     "vscode-tas-client": "^0.1.75"
   }
 }
