@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Improve the user experience of creating Java files. [PR#801](https://github.com/microsoft/vscode-java-dependency/pull/801), [PR#800](https://github.com/microsoft/vscode-java-dependency/pull/800).
 
 ## 0.23.2
+
 ### Fixed
 - Improve wording in Java Projects view. [PR#785](https://github.com/microsoft/vscode-java-dependency/pull/785)
 - Support showing Gradle sub-menu for projects imported by Gradle build server. [PR#786](https://github.com/microsoft/vscode-java-dependency/pull/786)

@@ -36,7 +36,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.core.JrtPackageFragmentRoot;
 // import org.eclipse.jdt.ls.core.internal.ProjectUtils;
 
@@ -175,7 +174,9 @@ public class PackageNode {
             }
             projectNode.setMetaDataValue(NATURE_ID, natureIds);
             String sourceVersion = javaElement.getJavaProject().getOption(JavaCore.COMPILER_SOURCE, true);
-            int jdkLevel = (int) (CompilerOptions.versionToJdkLevel(sourceVersion, true) >>> 16);
+            Map<String, String> options = javaElement.getJavaProject().getOptions(true);
+            String compliance = options.get(JavaCore.COMPILER_COMPLIANCE);
+            int jdkLevel = Integer.parseInt(compliance.substring(2));
             int majorVersion = Math.max(0, jdkLevel - 44); // 44 is the value of ClassFileConstants.MAJOR_VERSION_0
             projectNode.setMetaDataValue(MAX_SOURCE_VERSION, majorVersion);
         } catch (CoreException e) {
@@ -251,7 +252,7 @@ public class PackageNode {
             if (pkgRoot.getJavaProject().getPath().isPrefixOf(relativePath)) {
                 relativePath = relativePath.makeRelativeTo(javaProject.getPath());
             }
-            if (Objects.equals(ProjectUtils.WORKSPACE_LINK, relativePath.segment(0))) {
+            if (Objects.equals("WORKSPACE_LINK", relativePath.segment(0))) {
                 relativePath = relativePath.removeFirstSegments(1); // Remove the '_' prefix
             }
             displayName = relativePath.toPortableString();
