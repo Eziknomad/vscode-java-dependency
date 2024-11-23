@@ -56,7 +56,7 @@ public class JavaResourceVisitor implements ResourceVisitor {
     @Override
     public void visit(IClassFile classFile) {
         PackageNode node = new PackageNode(classFile.getElementName(), null, NodeKind.CLASSFILE);
-        node.setUri(JDTUtils.toUri(classFile));
+        node.setUri(classFile.getPath().toUri());
         IResource resource = classFile.getResource();
         if (resource != null) {
             node.setPath(resource.getFullPath().toPortableString());

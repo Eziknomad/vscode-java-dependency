@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
 
-import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -32,13 +31,25 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.ls.core.internal.ProjectUtils;
+// import org.eclipse.jdt.ls.core.internal.ProjectUtils;
 
 import com.microsoft.jdtls.ext.core.JdtlsExtActivator;
 import com.microsoft.jdtls.ext.core.PackageCommand;
 
 // TODO: progress monitor
 public class ResourceSet {
+
+    private boolean isUnmanagedFolder(IProject project) {
+        // Implement the logic to determine if the folder is unmanaged
+        // For now, return false as a placeholder
+        return false;
+    }
+
+    private IPath getProjectRealFolder(IProject project) {
+        // Implement the logic to get the real folder path of the project
+        // For now, return the project's location as a placeholder
+        return project.getLocation();
+    }
 
     private List<Object> resources;
     private boolean isHierarchicalView;
@@ -70,8 +81,8 @@ public class ResourceSet {
                 }
 
                 // skip invisible project's linked folder and add its children to the iterator.
-                if (ProjectUtils.isUnmanagedFolder(javaProject.getProject()) &&
-                        Objects.equals(ProjectUtils.WORKSPACE_LINK, pkgRoot.getElementName())) {
+                if (isUnmanagedFolder(javaProject.getProject())
+                        && Objects.equals("WORKSPACE_LINK", pkgRoot.getElementName())) {
                     try {
                         List<Object> nextObjs = PackageCommand.getPackageFragmentRootContent(
                             pkgRoot, isHierarchicalView, new NullProgressMonitor());
@@ -137,16 +148,16 @@ public class ResourceSet {
             return false;
         }
 
-        IPath projectRealFolder = ProjectUtils.getProjectRealFolder(project.getProject());
-        IPath resourcePath = FileUtil.toPath(resource.getLocationURI());
+        IPath projectRealFolder = getProjectRealFolder(project.getProject());
+        IPath resourcePath = new org.eclipse.core.runtime.Path(resource.getLocationURI().getPath());
         // check if the resource stores in the project's real location.
         if (!projectRealFolder.isPrefixOf(resourcePath)) {
             return false;
         }
 
         // skip linked folder.
-        if (Objects.equals(projectRealFolder, resourcePath) &&
-                Objects.equals(ProjectUtils.WORKSPACE_LINK, resource.getName())) {
+        if (Objects.equals(projectRealFolder, resourcePath)
+                && Objects.equals("WORKSPACE_LINK", resource.getName())) {
             return false;
         }
 

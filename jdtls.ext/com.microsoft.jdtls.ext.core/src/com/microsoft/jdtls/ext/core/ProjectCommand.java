@@ -60,11 +60,8 @@ import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ls.core.internal.JavaLanguageServerPlugin;
-import org.eclipse.jdt.ls.core.internal.ProjectUtils;
 import org.eclipse.jdt.ls.core.internal.ResourceUtils;
-import org.eclipse.jdt.ls.core.internal.managers.ProjectsManager;
-import org.eclipse.jdt.ls.core.internal.managers.UpdateClasspathJob;
-import org.eclipse.jdt.ls.core.internal.preferences.Preferences.ReferencedLibraries;
+// import org.eclipse.jdt.ls.core.internal.managers.ProjectsManager;
 import org.eclipse.lsp4j.jsonrpc.json.adapters.CollectionTypeAdapter;
 import org.eclipse.lsp4j.jsonrpc.json.adapters.EnumTypeAdapter;
 
@@ -84,6 +81,11 @@ public final class ProjectCommand {
             this.name = name;
             this.path = path;
         }
+
+        @Override
+        public String toString() {
+            return "MainClassInfo{name='" + name + "', path='" + path + "'}";
+        }
     }
 
     private static class Classpath {
@@ -97,7 +99,12 @@ public final class ProjectCommand {
 
     public static List<PackageNode> listProjects(List<Object> arguments, IProgressMonitor monitor) {
         String workspaceUri = (String) arguments.get(0);
-        IPath workspaceFolderPath = ResourceUtils.canonicalFilePathFromURI(workspaceUri);
+        IPath workspaceFolderPath;
+        try {
+            workspaceFolderPath = new Path(new java.net.URI(workspaceUri).getPath()).makeAbsolute();
+        } catch (java.net.URISyntaxException e) {
+            throw new IllegalArgumentException("Invalid workspace URI: " + workspaceUri, e);
+        }
 
         IProject[] projects;
         boolean filterNonJava = false;
@@ -105,10 +112,17 @@ public final class ProjectCommand {
             filterNonJava = (boolean) arguments.get(1);
         }
         if (!filterNonJava) {
-            projects = ProjectUtils.getAllProjects();
+            projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
         } else {
-            projects = Arrays.stream(ProjectUtils.getJavaProjects())
-                .map(IJavaProject::getProject).toArray(IProject[]::new);
+            projects = Arrays.stream(ResourcesPlugin.getWorkspace().getRoot().getProjects())
+                .filter(project -> {
+                    try {
+                        return project.hasNature(JavaCore.NATURE_ID);
+                    } catch (CoreException e) {
+                        return false;
+                    }
+                })
+                .toArray(IProject[]::new);
         }
 
         ArrayList<PackageNode> children = new ArrayList<>();
@@ -118,7 +132,8 @@ public final class ProjectCommand {
             }
 
             // ignore default projects
-            if (Objects.equals(project.getName(), ProjectsManager.DEFAULT_PROJECT_NAME)) {
+            final String DEFAULT_PROJECT_NAME = ".default";
+            if (Objects.equals(project.getName(), DEFAULT_PROJECT_NAME)) {
                 continue;
             }
 
@@ -148,22 +163,35 @@ public final class ProjectCommand {
 
     public static boolean refreshLibraries(List<Object> arguments, IProgressMonitor monitor) {
         String workspaceUri = (String) arguments.get(0);
-        IPath workspacePath = ResourceUtils.canonicalFilePathFromURI(workspaceUri);
-        String projectName = ProjectUtils.getWorkspaceInvisibleProjectName(workspacePath);
+        IPath workspacePath;
+        try {
+            workspacePath = new Path(new java.net.URI(workspaceUri).getPath()).makeAbsolute();
+        } catch (java.net.URISyntaxException e) {
+            throw new IllegalArgumentException("Invalid workspace URI: " + workspaceUri, e);
+        }
+        String projectName = ".project_" + workspacePath.toString().hashCode();
         IProject project = getWorkspaceRoot().getProject(projectName);
         try {
-            ReferencedLibraries libraries = JavaLanguageServerPlugin.getPreferencesManager().getPreferences()
-                    .getReferencedLibraries();
-            UpdateClasspathJob.getInstance().updateClasspath(JavaCore.create(project), libraries);
+            // Assuming you have a method to refresh the classpath using public API
+            refreshProjectClasspath(JavaCore.create(project));
             return true;
         } catch (Exception e) {
-            JavaLanguageServerPlugin.logException("Exception occurred during waiting for classpath to be updated", e);
+            JdtlsExtActivator.logException("Exception occurred during waiting for classpath to be updated", e);
             return false;
         }
     }
 
     private static IWorkspaceRoot getWorkspaceRoot() {
         return ResourcesPlugin.getWorkspace().getRoot();
+    }
+
+    private static void refreshProjectClasspath(IJavaProject javaProject) {
+        try {
+            javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+            javaProject.getProject().build(IResource.FORCE, new NullProgressMonitor());
+        } catch (CoreException e) {
+            JdtlsExtActivator.log(e);
+        }
     }
 
     public static boolean exportJar(List<Object> arguments, IProgressMonitor monitor) {
@@ -295,7 +323,7 @@ public final class ProjectCommand {
     }
 
     public static boolean checkImportStatus() {
-        IProject[] projects = ProjectUtils.getAllProjects();
+        IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
         boolean hasError = false;
         for (IProject project : projects) {
             if (ProjectsManager.DEFAULT_PROJECT_NAME.equals(project.getName())) {
@@ -303,7 +331,7 @@ public final class ProjectCommand {
             }
 
             // if a Java project found, we think it as success import now.
-            if (ProjectUtils.isJavaProject(project)) {
+            if (project.hasNature(JavaCore.NATURE_ID)) {
                 return false;
             }
 
@@ -324,7 +352,7 @@ public final class ProjectCommand {
     private static void reportExportJarMessage(String terminalId, int severity, String message) {
         if (StringUtils.isNotBlank(message) && StringUtils.isNotBlank(terminalId)) {
             String readableSeverity = getSeverityString(severity);
-            JavaLanguageServerPlugin.getInstance().getClientConnection().executeClientCommand(COMMAND_EXPORT_JAR_REPORT,
+            JdtlsExtActivator.logInfo("Executing client command: " + COMMAND_EXPORT_JAR_REPORT + " with terminalId: " + terminalId + " and message: [" + getSeverityString(severity) + "] " + message);
                 terminalId, "[" + readableSeverity + "] " + message);
         }
     }

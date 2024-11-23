@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.ls.core.internal.IDelegateCommandHandler;
+import org.eclipse.jdt.ls.core.IDelegateCommandHandler;
 
 public class CommandHandler implements IDelegateCommandHandler {
 

@@ -36,11 +36,9 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.core.JrtPackageFragmentRoot;
-import org.eclipse.jdt.ls.core.internal.JDTUtils;
-import org.eclipse.jdt.ls.core.internal.ProjectUtils;
+// import org.eclipse.jdt.ls.core.internal.ProjectUtils;
 
 import com.microsoft.jdtls.ext.core.ExtUtils;
 import com.microsoft.jdtls.ext.core.JdtlsExtActivator;
@@ -168,7 +166,7 @@ public class PackageNode {
         IProject proj = javaElement.getJavaProject().getProject();
         PackageNode projectNode = new PackageNode(proj.getName(), proj.getFullPath().toPortableString(),
                 NodeKind.PROJECT);
-        projectNode.setUri(ProjectUtils.getProjectRealFolder(proj).toFile().toURI().toString());
+        projectNode.setUri(proj.getLocation().toFile().toURI().toString());
         try {
             List<String> natureIds = new ArrayList<>(Arrays.asList(proj.getDescription().getNatureIds()));
             if (!ProjectUtils.isVisibleProject(proj)) {
@@ -178,7 +176,7 @@ public class PackageNode {
             projectNode.setMetaDataValue(NATURE_ID, natureIds);
             String sourceVersion = javaElement.getJavaProject().getOption(JavaCore.COMPILER_SOURCE, true);
             int jdkLevel = (int) (CompilerOptions.versionToJdkLevel(sourceVersion, true) >>> 16);
-            int majorVersion = Math.max(0, jdkLevel - ClassFileConstants.MAJOR_VERSION_0);
+            int majorVersion = Math.max(0, jdkLevel - 44); // 44 is the value of ClassFileConstants.MAJOR_VERSION_0
             projectNode.setMetaDataValue(MAX_SOURCE_VERSION, majorVersion);
         } catch (CoreException e) {
             // do nothing
@@ -188,13 +186,13 @@ public class PackageNode {
 
     public static PackageNode createNodeForFile(IFile file) {
         PackageNode entry = new PackageNode(file.getName(), file.getFullPath().toPortableString(), NodeKind.FILE);
-        entry.setUri(JDTUtils.getFileURI(file));
+        entry.setUri(file.getLocationURI().toString());
         return entry;
     }
 
     public static PackageNode createNodeForFolder(IFolder folder) {
         PackageNode entry = new PackageNode(folder.getName(), folder.getFullPath().toPortableString(), NodeKind.FOLDER);
-        entry.setUri(JDTUtils.getFileURI(folder));
+        entry.setUri(folder.getLocationURI().toString());
         return entry;
     }
 
@@ -339,7 +337,7 @@ public class PackageNode {
             primaryTypeNode.setMetaDataValue(K_TYPE_KIND, K_CLASS);
         }
 
-        primaryTypeNode.setUri(JDTUtils.toUri(type.getTypeRoot()));
+        primaryTypeNode.setUri(type.getTypeRoot().getPath().toFile().toURI().toString());
         return primaryTypeNode;
     }
 

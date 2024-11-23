@@ -22,8 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.core.JarEntryFile;
-import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
+// import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
 import org.eclipse.jdt.ls.core.internal.IContentProvider;
 import org.eclipse.jdt.ls.core.internal.JavaLanguageServerPlugin;
 
@@ -44,8 +43,8 @@ public class JarFileContentProvider implements IContentProvider {
                 throw new CoreException(new Status(IStatus.ERROR, JdtlsExtActivator.PLUGIN_ID, String.format("No package root found for %s", rootId)));
             }
 
-            if (packageRoot instanceof JarPackageFragmentRoot) {
-                JarEntryFile fileEntry = ExtUtils.findJarEntryFile(packageRoot, path);
+            if (packageRoot.isArchive()) {
+                IJarEntryResource fileEntry = ExtUtils.findJarEntryFile(packageRoot, path);
                 if (fileEntry != null) {
                     return readFileContent(fileEntry);
                 }
@@ -57,7 +56,7 @@ public class JarFileContentProvider implements IContentProvider {
         return null;
     }
 
-    private static String readFileContent(JarEntryFile file) throws CoreException {
+    private static String readFileContent(IJarEntryResource file) throws CoreException {
         try (InputStream stream = (file.getContents())) {
             return convertStreamToString(stream);
         } catch (IOException e) {
