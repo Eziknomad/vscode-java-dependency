@@ -21,6 +21,7 @@
             <version>4.0.3</version>
             <executions>
                 <execution>
+                  <?m2e execute onConfiguration?>
                     <id>default-process</id>
                     <goals>
                         <goal>process</goal>

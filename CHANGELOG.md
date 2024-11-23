@@ -1,33 +1,44 @@
 # Change Log
+
 All notable changes to the "vscode-java-dependency" extension will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## 0.24.0
-* feat - Support adding new package from file explorer by @jdneo in https://github.com/microsoft/vscode-java-dependency/pull/845
+
+* feat - Support adding new package from file explorer by @jdneo in [PR#845](https://github.com/microsoft/vscode-java-dependency/pull/845)
 
 ## 0.23.7
-* fix - Creates file watcher with trailing slash causes problems for other extensions by @testforstephen in https://github.com/microsoft/vscode-java-dependency/pull/829
-* fix - Micronaut® Launch extension renamed. by @dbalek in https://github.com/microsoft/vscode-java-dependency/pull/831
+
+* fix - Creates file watcher with trailing slash causes problems for other extensions by @testforstephen in [PR#829](https://github.com/microsoft/vscode-java-dependency/pull/829)
+* fix - Micronaut® Launch extension renamed. by @dbalek in [PR#831](https://github.com/microsoft/vscode-java-dependency/pull/831)
 
 ## 0.23.6
+
 ### Fixed
-- Referenced Libraries container should be immutable for build tool projects. [PR#826](https://github.com/microsoft/vscode-java-dependency/pull/826)
+
+* Referenced Libraries container should be immutable for build tool projects. [PR#826](https://github.com/microsoft/vscode-java-dependency/pull/826)
 
 ## 0.23.5
-### Added
-- Add 'New Java File' menu to File Explorer. [PR#820](https://github.com/microsoft/vscode-java-dependency/pull/820).
+
+### Added in 0.24.0
+
+* Add 'New Java File' menu to File Explorer. [PR#820](https://github.com/microsoft/vscode-java-dependency/pull/820).
 
 ### Changed
-- Adjust the existing File Explorer menu order. [PR#820](https://github.com/microsoft/vscode-java-dependency/pull/820).
+
+* Adjust the existing File Explorer menu order. [PR#820](https://github.com/microsoft/vscode-java-dependency/pull/820).
 
 ## 0.23.4
-### Added
-- Contribute 'New Java Project...' command to `File` > `New File...` and File Explorer menus. [PR#809](https://github.com/microsoft/vscode-java-dependency/pull/809)
+
+### Added in 0.18.3
+
+* Contribute 'New Java Project...' command to `File` > `New File...` and File Explorer menus. [PR#809](https://github.com/microsoft/vscode-java-dependency/pull/809)
 
 ## 0.23.3
-### Added
+
+### Added in 0.18.7
 - Register the project delete event. [PR#802](https://github.com/microsoft/vscode-java-dependency/pull/802)
 
 ### Changed
@@ -45,7 +56,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Removed marketplace preview flag. [PR#780](https://github.com/microsoft/vscode-java-dependency/pull/780)
 
 ## 0.23.0
-### Added
+### Added in 0.18.0
 - Support creating Micronaut projects. [#713](https://github.com/microsoft/vscode-java-dependency/issues/713), contributed by [@dbalek](https://github.com/dbalek)
 - Support creating Craal Cloud Native projects. [PR#765](https://github.com/microsoft/vscode-java-dependency/pull/765), contributed by [@dbalek](https://github.com/dbalek)
 
@@ -153,6 +164,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [Bugs fixed](https://github.com/microsoft/vscode-java-dependency/issues?q=is%3Aissue+label%3Abug+milestone%3A0.18.4+is%3Aclosed)
 
 ## 0.18.3
+
 ### Added
 - Add new unmanaged folder metadata for the project node. [PR#479](https://github.com/microsoft/vscode-java-dependency/pull/479)
 ### Changed
@@ -167,6 +179,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [Bugs fixed](https://github.com/microsoft/vscode-java-dependency/issues?q=is%3Aissue+label%3Abug+milestone%3A0.18.2+is%3Aclosed)
 
 ## 0.18.1
+
 ### Added
 - Add welcome view in Java Project explorer when there is no Java projects in the workspace. [PR#461](https://github.com/microsoft/vscode-java-dependency/pull/461)
 
@@ -349,7 +362,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix: No way to link a java class definition back to the project explorer. [#80](https://github.com/Microsoft/vscode-java-dependency/issues/80).
 
 ## 0.1.0 - 2018-10-19
+
 ### Added
-- View Java source code in the flat package
-- View Java project dependencies, supporting Eclipse/Maven/Gradle
-- Create simple Java project
+
+* View Java source code in the flat package
+* View Java project dependencies, supporting Eclipse/Maven/Gradle
+* Create simple Java project
